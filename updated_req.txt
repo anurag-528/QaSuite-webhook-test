@@ -1,0 +1,336 @@
+# ============================================================================
+# QA Suite Comprehensive Requirements File
+# ============================================================================
+# Merged from both deploy_portable.sh and deploy_portable_Indrani.sh versions
+# Optimized for compatibility and comprehensive functionality
+#
+# CROSS-PLATFORM COMPATIBILITY NOTES (Updated: 2026-02-13):
+# ---------------------------------------------------------
+# - req_x.txt = Linux env (original baseline from Linux dev machine)
+# - This file = Updated for Windows + Linux cross-platform compatibility
+# - Where versions differ between Linux & Windows, both are noted
+# - Commented-out lines with "#OLD:" show the previous requirement spec
+#   before alignment with actual working versions on both platforms
+# - Versions use ">=" to allow flexibility across Linux/Windows envs
+# - OpenTelemetry packages are PINNED (==) because all must be same version
+# ============================================================================
+
+# =========================
+# Core Python dependencies
+# =========================
+#OLD: fastapi>=0.115.0  # Was too low; Linux=0.116.1, Windows=0.128.0
+fastapi>=0.116.1  # Linux=0.116.1, Windows=0.128.0 (both work)
+#OLD: uvicorn[standard]>=0.30.0  # Was too low; Linux=0.35.0, Windows=0.40.0
+uvicorn[standard]>=0.35.0  # Linux=0.35.0, Windows=0.40.0 (both work)
+pydantic>=2.10.0  # Linux=2.12.5, Windows=2.12.5 (same)
+#OLD: pydantic-settings>=2.6.0
+pydantic-settings>=2.10.1  # Linux=2.10.1, Windows=2.12.0 (aligned to min)
+pydantic-core>=2.27.0  # Linux=2.41.5, Windows=2.41.5 (same)
+sqlalchemy>=2.0.36
+greenlet>=3.1.0  # Required for SQLAlchemy async support
+#OLD: alembic>=1.18.1  # Was too high for Linux
+alembic>=1.16.5  # Linux=1.16.5, Windows=1.18.4 (lowered floor for Linux compat)
+#OLD: asyncpg>=0.31.0  # Was too high for Linux
+asyncpg>=0.30.0  # Linux=0.30.0, Windows=0.31.0 (lowered floor for Linux compat)
+#OLD: psycopg2-binary>=2.9.11
+psycopg2-binary>=2.9.9  # Linux=2.9.9, Windows=2.9.11 (lowered floor for Linux compat)
+#OLD: aiosqlite>=0.22.1  # Was too high for Linux
+aiosqlite>=0.21.0  # Linux=0.21.0, Windows=0.22.1 (lowered floor for Linux compat)
+
+# =========================
+# External Tools Integration
+# =========================
+#OLD: aiohttp>=3.13.3  # Was too high for Linux
+aiohttp>=3.12.15  # Linux=3.12.15, Windows=3.13.3 (lowered floor for Linux compat)
+PyJWT>=2.7.0
+cryptography>=41.0.7  # Linux=46.0.1, Windows=45.0.7 (both above minimum)
+python-jose[cryptography]>=3.5.0
+
+# =========================
+# Web Content Extraction & Scraping
+# =========================
+#OLD: beautifulsoup4>=4.14.3  # Was too high for Linux
+beautifulsoup4>=4.13.5  # Linux=4.13.5, Windows=4.14.3 (lowered floor for Linux compat)
+#OLD: lxml>=6.0.2  # Was too high for Linux
+lxml>=6.0.1  # Linux=6.0.1, Windows=6.0.2 (lowered floor for Linux compat)
+html5lib>=1.1
+#OLD: Brotli>=1.2.0  # Was too high for Linux
+Brotli>=1.1.0  # Linux=1.1.0, Windows=1.2.0 (lowered floor for Linux compat)
+brotlipy>=0.7.0  # Alternative Brotli implementation
+certifi>=2023.11.17  # Updated CA certificates for SSL
+urllib3>=2.0.7  # Updated HTTP library with better SSL support
+
+# =========================
+# Manual Execution Support
+# =========================
+websockets>=15.0.0
+asyncio-mqtt>=0.16.2
+
+# =========================
+# MCP Integration (Model Context Protocol)
+# =========================
+#OLD: mcp>=1.25.0  # Was too high for Linux
+mcp>=1.14.0  # Linux=1.14.0, Windows=1.26.0 (lowered floor for Linux compat)
+
+# =========================
+# AI/LLM - LangChain 0.3.x (current codebase compatibility)
+# =========================
+langchain>=0.3.0,<0.4.0  # Linux=0.3.27, Windows=0.3.27 (same)
+langchain-core>=0.3.0,<0.4.0  # Linux=0.3.83, Windows=0.3.83 (same)
+#OLD: langchain-openai>=0.2.0,<0.3.0  # Was blocking Linux's 0.3.33
+langchain-openai>=0.2.0,<0.4.0  # Linux=0.3.33, Windows=0.2.14 (widened upper bound for Linux)
+langchain-google-genai>=2.0.0,<3.0.0  # Linux=2.0.10, Windows=2.0.10 (same)
+langchain-text-splitters>=0.3.0,<0.4.0  # Linux=0.3.11, Windows=0.3.11 (same)
+tiktoken>=0.7.0,<1.0.0
+
+# =========================
+# LLM Providers - Compatible with LangChain 0.3.x
+# =========================
+openai>=1.50.0,<2.0.0  # Linux=1.108.0, Windows=1.106.1 (both in range)
+anthropic>=0.25.0
+google-generativeai>=0.8.0
+groq>=0.9.0
+
+# =========================
+# LangGraph & LangSmith
+# NOTE: LangGraph 1.x requires langgraph-checkpoint 3.x and langsmith 0.6.x
+#       but our codebase currently works with 0.6.x / 2.x / 0.4.x respectively.
+#       Linux env has newer versions; Windows has older but working versions.
+#       Keeping floor low to support both until codebase is upgraded.
+# =========================
+#OLD: langgraph>=1.0.0,<2.0.0  # Was too high; both PCs have 0.6.11
+langgraph>=0.6.0,<2.0.0  # Linux=0.6.11, Windows=0.6.11 (same, lowered floor)
+#OLD: langgraph-checkpoint>=2.0.0,<3.0.0  # Linux has 3.0.1 which was blocked
+langgraph-checkpoint>=2.0.0  # Linux=3.0.1, Windows=2.1.2 (removed upper bound for Linux)
+#OLD: langsmith>=0.3.0,<1.0.0
+langsmith>=0.4.0,<1.0.0  # Linux=0.6.2, Windows=0.4.43 (raised floor to tested min)
+
+# =========================
+# Vector Database & ML
+# =========================
+#OLD: chromadb>=1.3.0  # Was too high for Linux
+chromadb>=1.1.0  # Linux=1.1.0, Windows=1.5.0 (lowered floor for Linux compat)
+sentence-transformers>=3.0.0
+numpy>=1.26.0,<2.0.0  # Keep on 1.x for compatibility
+pandas>=2.1.3  # Linux=2.1.3, Windows=2.3.2
+torch>=2.0.0
+transformers>=4.40.0  # Linux=4.56.1, Windows=4.55.4 (both above minimum)
+huggingface-hub>=0.20.0  # Linux=0.35.0, Windows=0.34.4 (both above minimum)
+scikit-learn>=1.5.0  # Linux=1.7.2, Windows=1.7.1 (both above minimum)
+
+# =========================
+# Document processing libraries
+# =========================
+PyPDF2>=3.0.1
+#OLD: pdfplumber>=0.11.9  # Was too high for Linux
+pdfplumber>=0.11.8  # Linux=0.11.8, Windows=0.11.9 (lowered floor for Linux compat)
+#OLD: openpyxl>=3.1.5  # Was too high for Linux
+openpyxl>=3.1.2  # Linux=3.1.2, Windows=3.1.5 (lowered floor for Linux compat)
+python-docx>=1.2.0
+
+# =========================
+# Testing framework integrations
+# =========================
+robotframework>=7.0.0  # Linux=6.1.1 uses older; Windows=7.4.1
+selenium>=4.15.0  # Linux=4.15.0, Windows=4.40.0
+pytest>=8.0.0  # Linux=8.4.2, Windows=8.4.1
+pytest-asyncio>=0.23.0  # Linux=1.2.0, Windows=1.3.0
+
+# --- Testing Plugins (added from Linux env for cross-platform parity) ---
+allure-pytest>=2.13.2  # Test reporting - Linux=2.13.2, Windows=2.13.2
+allure-python-commons>=2.13.2  # Allure commons - Linux=2.13.2, Windows=2.13.2
+coverage>=7.10.6  # Code coverage - Linux=7.10.6, Windows=7.10.6
+pytest-benchmark>=5.1.0  # Performance benchmarks
+pytest-clarity>=1.0.1  # Better assertion diffs
+pytest-cov>=4.1.0  # Coverage plugin
+pytest-datadir>=1.8.0  # Test data directories
+pytest-html>=4.1.1  # HTML test reports
+pytest-instafail>=0.5.0  # Show failures immediately
+pytest-json-report>=1.5.0  # JSON test reports
+pytest-logger>=1.1.1  # Logging plugin
+pytest-metadata>=3.1.1  # Test metadata
+pytest-mock>=3.15.1  # Mocking support
+pytest-pdb>=0.3.1  # PDB debugger integration
+pytest-profiling>=1.8.1  # Test profiling
+pytest-rerunfailures>=16.0.1  # Re-run flaky tests
+pytest-sugar>=1.1.1  # Better progress bar
+pytest-timeout>=2.4.0  # Test timeouts
+pytest-xdist>=3.3.1  # Parallel test execution
+
+# =========================
+# Android Automotive ADB Integration
+# =========================
+adb-shell>=0.4.4  # Alternative ADB client library
+pure-python-adb==0.3.0.dev0  # Python ADB client - dev version for compatibility
+pillow>=10.0.0  # Image processing for screenshots
+opencv-python>=4.8.0  # Advanced image operations and comparison
+pytesseract>=0.3.10  # OCR text extraction from screenshots
+scikit-image>=0.22.0  # Advanced image analysis and comparison
+
+# =========================
+# External Integrations
+# =========================
+jira>=3.5.0  # Jira Python library
+atlassian-python-api>=3.41.0  # Atlassian API wrapper
+PyGithub>=2.1.0  # GitHub API wrapper
+slack-sdk>=3.27.0  # Slack SDK
+paramiko>=3.4.0  # SSH connections
+
+# =========================
+# System integrations
+# =========================
+docker>=7.0.0
+#OLD: kubernetes>=34.0.0  # Was too high for Linux
+kubernetes>=33.1.0  # Linux=33.1.0, Windows=35.0.0 (lowered floor for Linux compat)
+#OLD: redis>=7.0.0  # Was too high for Linux
+redis>=6.4.0  # Linux=6.4.0, Windows=7.0.1 (lowered floor for Linux compat)
+motor>=3.6.0  # MongoDB async driver
+
+# =========================
+# Web scraping and automation
+# =========================
+requests>=2.31.0
+
+# =========================
+# Data processing
+# =========================
+python-multipart>=0.0.9
+
+# =========================
+# Configuration and utilities
+# =========================
+python-dotenv>=1.0.0  # Linux=1.0.0, Windows=1.2.1 (both work)
+pyyaml>=6.0.1
+click>=8.1.0
+rich>=13.7.0
+loguru>=0.7.0
+
+# =========================
+# System monitoring and environment management
+# =========================
+psutil>=5.9.0
+
+# =========================
+# HTTP clients and networking
+# =========================
+httpx>=0.28.0  # Modern HTTP client
+#OLD: httpx-sse>=0.4.3  # Was too high for Linux
+httpx-sse>=0.4.1  # Linux=0.4.1, Windows=0.4.3 (lowered floor for Linux compat)
+#OLD: sse-starlette>=3.2.0  # Was too high for Linux
+sse-starlette>=3.0.2  # Linux=3.0.2, Windows=3.2.0 (lowered floor for Linux compat)
+#OLD: grpcio>=1.76.0  # Was too high for Linux
+grpcio>=1.75.0  # Linux=1.75.0, Windows=1.76.0 (lowered floor for Linux compat)
+
+# =========================
+# Authentication and security
+# =========================
+#OLD: bcrypt>=5.0.0  # Was too high for Linux
+bcrypt>=4.3.0  # Linux=4.3.0, Windows=5.0.0 (lowered floor for Linux compat)
+email-validator>=2.3.0
+
+# =========================
+# API documentation
+# =========================
+python-jose>=3.5.0
+
+# =========================
+# Additional utilities for comprehensive testing
+# =========================
+#OLD: typer>=0.20.0  # Was too high for Linux
+typer>=0.17.4  # Linux=0.17.4, Windows=0.21.1 (lowered floor for Linux compat)
+
+# =========================
+# Development dependencies
+# =========================
+#OLD: black>=24.0.0  # Was too high for Linux
+black>=23.11.0  # Linux=23.11.0, Windows=25.1.0 (lowered floor for Linux compat)
+isort>=5.13.0  # Linux=6.0.1, Windows=7.0.0
+#OLD: flake8>=7.0.0  # Was too high for Linux
+flake8>=6.1.0  # Linux=6.1.0, Windows=7.3.0 (lowered floor for Linux compat)
+mypy>=1.10.0
+pre-commit>=3.7.0
+
+# =========================
+# Critical dependencies for ChromaDB
+# =========================
+pybase64>=1.4.0
+tenacity>=9.0.0
+overrides>=7.7.0
+jsonschema>=4.25.0
+
+# =========================
+# OpenTelemetry Stack
+# IMPORTANT: All OpenTelemetry packages MUST be on the same minor version
+# to avoid dependency conflicts. The instrumentation packages (0.59b0)
+# require SDK/API 1.38.0. Aligned on 2026-02-13 to fix conflicts on Windows.
+# DO NOT change individual versions without updating ALL of them together.
+# =========================
+opentelemetry-api==1.38.0  # PINNED - must match SDK & instrumentation
+opentelemetry-sdk==1.38.0  # PINNED - must match API & instrumentation
+opentelemetry-proto==1.38.0  # PINNED - must match SDK
+opentelemetry-semantic-conventions==0.59b0  # PINNED - must match instrumentation
+opentelemetry-exporter-otlp==1.38.0  # PINNED - must match SDK
+opentelemetry-exporter-otlp-proto-grpc==1.38.0  # PINNED - must match SDK
+opentelemetry-exporter-otlp-proto-http==1.38.0  # PINNED - must match SDK
+opentelemetry-exporter-otlp-proto-common==1.38.0  # PINNED - must match SDK
+#OLD: opentelemetry-api>=1.38.0  # Was >=, caused version drift
+#OLD: opentelemetry-sdk>=1.38.0  # Was >=, caused mismatch with instrumentation
+#OLD: opentelemetry-exporter-otlp>=1.39.1  # Was 1.39.1, conflicted with SDK 1.38.0
+# --- OpenTelemetry Instrumentation (added from Linux env) ---
+opentelemetry-instrumentation==0.59b0  # PINNED - FastAPI auto-instrumentation
+opentelemetry-instrumentation-asgi==0.59b0  # PINNED - ASGI middleware
+opentelemetry-instrumentation-fastapi==0.59b0  # PINNED - FastAPI specific
+opentelemetry-util-http==0.59b0  # PINNED - HTTP utilities
+
+# =========================
+# Critical dependencies for Pydantic/FastAPI
+# =========================
+#OLD: starlette>=0.27.0  # Was too low
+starlette>=0.47.3  # Linux=0.47.3, Windows=0.50.0 (aligned to Linux minimum)
+typing-extensions>=4.15.0
+typing-inspection>=0.4.2  # Use compatible version
+annotated-types>=0.7.0
+anyio>=4.2.0
+async-timeout>=5.0.1
+
+# =========================
+# Load Testing & Performance (added from Linux env for cross-platform parity)
+# =========================
+flask>=3.1.2  # Required by Locust web UI
+flask-basicauth>=0.2.0  # Locust auth
+flask-cors>=6.0.1  # Locust CORS
+locust>=2.17.0  # Load testing framework
+gevent>=25.8.2  # Required by Locust for concurrent users
+
+# =========================
+# UI Automation (added from Linux env for cross-platform parity)
+# =========================
+pyautogui>=0.9.54  # GUI automation
+keyboard>=0.13.5  # Keyboard input simulation
+
+# =========================
+# ML - Vector Search (added from Linux env for cross-platform parity)
+# =========================
+faiss-cpu>=1.12.0  # Facebook AI Similarity Search (CPU version)
+
+# =========================
+# Robot Framework Plugins (added from Linux env for cross-platform parity)
+# =========================
+robotframework-pythonlibcore>=4.4.1  # RF Python lib integration
+robotframework-requests>=0.9.7  # RF HTTP requests
+robotframework-seleniumlibrary>=6.2.0  # RF Selenium browser automation
+
+# =========================
+# Additional utilities (added from Linux env for cross-platform parity)
+# =========================
+asgiref>=3.10.0  # ASGI reference implementation
+blinker>=1.9.0  # Signal/event support (Flask dependency)
+configargparse>=1.7.1  # Config + argparse combined
+execnet>=2.1.1  # Multi-channel execution (pytest-xdist dep)
+msgpack>=1.1.1  # Binary serialization
+pprintpp>=0.4.0  # Pretty printing
+py-cpuinfo>=9.0.0  # CPU info (pytest-benchmark dep)
+pyzmq>=27.1.0  # ZeroMQ bindings
+roundrobin>=0.0.4  # Round-robin scheduling
+termcolor>=3.1.0  # Terminal colors
+werkzeug>=3.1.3  # WSGI utilities (Flask dependency)
